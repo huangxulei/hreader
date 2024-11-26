@@ -40,7 +40,9 @@ CREATE TABLE tb_styles (
   paragraph_spacing REAL,
   side_margin REAL,
   top_margin REAL,
-  bottom_margin REAL
+  bottom_margin REAL,
+  rating REAL,
+  group_id INTEGER
 )
 ''';
 
@@ -91,42 +93,59 @@ class DBHelper {
     return _database!;
   }
 
+  static void close() {
+    _database?.close();
+    _database = null;
+  }
+
   Future<Database> initDB() async {
     int dbVersion = 5;
 
     switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+        final databasePath = await getHDataBasesPath();
+        final path = join(databasePath, 'app_database.db');
+        return await openDatabase(
+          path,
+          version: dbVersion,
+          onCreate: (db, version) async {
+            onUpgradeDatabase(db, 0, version);
+          },
+          onUpgrade: onUpgradeDatabase,
+        );
       case TargetPlatform.windows:
         sqfliteFfiInit();
         var databaseFactory = databaseFactoryFfi;
-        final databasePath = await getHDataBasesPaht();
+        final databasePath = await getHDataBasesPath();
 
         HLog.info('Database: database path: $databasePath');
         final path = join(databasePath, "app_database.db");
         return await databaseFactory.openDatabase(path,
             options: OpenDatabaseOptions(
-                version: dbVersion,
-                onCreate: (db, version) async {
-                  //
-                }));
+              version: dbVersion,
+              onCreate: (db, version) async {
+                onUpgradeDatabase(db, 0, version);
+              },
+              onUpgrade: onUpgradeDatabase,
+            ));
+      default:
+        throw Exception('Unsupported platform');
     }
   }
-}
 
-Future<void> onUpgradeDatabase(
-    Database db, int oldVersion, int newVersion) async {
-  HLog.info('Database: upgrade database from $oldVersion to $newVersion');
-  switch (oldVersion) {
-    case 0:
-      HLog.info('Database: create database version $newVersion');
-      await db.execute(CREATE_BOOK_SQL);
-      await db.execute(CREATE_NOTE_SQL);
-      await db.execute(CREATE_THEME_SQL);
-      await db.execute(CREATE_STYLE_SQL);
-      await db.execute(CREATE_READING_TIME_SQL);
-      await db.execute(PRIMARY_THEME_1);
-      await db.execute(PRIMARY_THEME_2);
-      continue case1;
-    case1:
-    case 1:
+  Future<void> onUpgradeDatabase(
+      Database db, int oldVersion, int newVersion) async {
+    HLog.info('Database: upgrade database from $oldVersion to $newVersion');
+    switch (oldVersion) {
+      case 0:
+        HLog.info('Database: create database version $newVersion');
+        await db.execute(CREATE_BOOK_SQL);
+        await db.execute(CREATE_NOTE_SQL);
+        await db.execute(CREATE_THEME_SQL);
+        await db.execute(CREATE_STYLE_SQL);
+        await db.execute(CREATE_READING_TIME_SQL);
+        await db.execute(PRIMARY_THEME_1);
+        await db.execute(PRIMARY_THEME_2);
+    }
   }
 }
