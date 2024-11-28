@@ -16,7 +16,9 @@ CREATE TABLE tb_books (
   is_deleted INTEGER,
   description TEXT,
   create_time TEXT,
-  update_time TEXT
+  update_time TEXT,
+  rating REAL,
+  group_id INTEGER
 )
 ''';
 
@@ -41,8 +43,6 @@ CREATE TABLE tb_styles (
   side_margin REAL,
   top_margin REAL,
   bottom_margin REAL,
-  rating REAL,
-  group_id INTEGER
 )
 ''';
 

@@ -45,3 +45,9 @@ Future<void> updateBook(Book book) async {
     whereArgs: [book.id],
   );
 }
+
+Future<List<Book>> selectNotDeleteBooks() {
+  return selectBooks().then((books) {
+    return books.where((book) => !book.isDeleted).toList();
+  });
+}

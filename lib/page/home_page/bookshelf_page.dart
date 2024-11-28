@@ -3,9 +3,12 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hreader/providers/book_list.dart';
+import 'package:hreader/service/book.dart';
 import 'package:hreader/utils/get_path/cache_path.dart';
 import 'package:hreader/utils/log/common.dart';
 import 'package:hreader/utils/toast/common.dart';
+import 'package:hreader/widgets/tips/bookshelf_tips.dart';
 
 class BookshelfPage extends ConsumerStatefulWidget {
   const BookshelfPage({super.key});
@@ -33,7 +36,7 @@ class BookshelfPageState extends ConsumerState<BookshelfPage>
 
     if (!Platform.isAndroid) {
       fileList = await Future.wait(files.map((file) async {
-        Directory tempDir = await getAnxCacheDir();
+        Directory tempDir = await getHCacheDir();
         File tempFile = File("${tempDir.path}/${file.name}");
         await File(file.path!).copy(tempFile.path);
         return tempFile;
@@ -102,12 +105,20 @@ class BookshelfPageState extends ConsumerState<BookshelfPage>
                     onPressed: () async {
                       for (var file in supportedFiles) {
                         HToast.show(file.path.split('/').last);
+                        await importBook(file, ref);
                       }
+                      Navigator.of(context).pop('dialog');
                     },
                     child: Text("导入${supportedFiles.length}本书"))
             ],
           );
         });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    HToast.init(context);
   }
 
   @override
@@ -122,6 +133,25 @@ class BookshelfPageState extends ConsumerState<BookshelfPage>
           ),
         ],
       ),
+      body: ref.watch(bookListProvider).when(
+            data: (books) {
+              return books.isEmpty
+                  ? const Center(child: BookshelfTips())
+                  : GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 5,
+                      ),
+                      itemCount: books.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          child: Text("${books[index].title}"),
+                        );
+                      },
+                    );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(child: Text(error.toString())),
+          ),
     );
   }
 }
