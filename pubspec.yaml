@@ -19,6 +19,7 @@ dependencies:
     shared_preferences: ^2.3.3
     flutter_riverpod: ^2.5.1
     provider: ^6.1.2
+    flutter_gen_runner: ^5.4.0
     flutter_file_dialog: ^3.0.2
     flutter_smart_dialog: ^4.9.8+5
     fluttertoast: ^8.2.6
@@ -28,6 +29,19 @@ dev_dependencies:
         sdk: flutter
 
     flutter_lints: ^4.0.0
+    build_runner: ^2.4.12
 
 flutter:
     uses-material-design: true
+    generate: true
+    assets:
+        - assets/fonts/SourceHanSerifSC-Regular.otf
+        - pubspec.yaml
+        - assets/foliate-js/
+        - assets/foliate-js/vendor/
+        - assets/foliate-js/vendor/pdfjs/
+
+    fonts:
+        - family: SourceHanSerif
+          fonts:
+              - asset: assets/fonts/SourceHanSerifSC-Regular.otf
