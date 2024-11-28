@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.hreader"
+    namespace = "com.hxl.hreader"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
