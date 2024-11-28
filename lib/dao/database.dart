@@ -42,7 +42,7 @@ CREATE TABLE tb_styles (
   paragraph_spacing REAL,
   side_margin REAL,
   top_margin REAL,
-  bottom_margin REAL,
+  bottom_margin REAL
 )
 ''';
 
