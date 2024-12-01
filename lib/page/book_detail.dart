@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hreader/model/book.dart';
+import 'package:hreader/service/book.dart';
 import 'package:hreader/utils/log/common.dart';
 import 'package:hreader/widgets/bookshelf/book_cover.dart';
 
@@ -145,6 +147,67 @@ class _BookDetailState extends ConsumerState<BookDetail> {
                       tag: widget.book.coverFullPath,
                       child: bookCover(context, widget.book,
                           height: 230, width: 160)),
+                ),
+              ),
+            ),
+            Positioned(
+                left: 30,
+                top: 240 + top,
+                child: RatingBar.builder(
+                  initialRating: rating,
+                  minRating: 0,
+                  direction: Axis.horizontal,
+                  allowHalfRating: true,
+                  itemCount: 5,
+                  itemSize: 20,
+                  itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  itemBuilder: (context, _) => const Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                  onRatingUpdate: (rating) {
+                    setState(() {
+                      this.rating = rating;
+                      updateBookRating(widget.book, rating);
+                    });
+                  },
+                )),
+            // book title and author
+            Positioned(
+              left: 190,
+              top: 5 + top,
+              child: SizedBox(
+                width: width - 190,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      autofocus: true,
+                      initialValue: widget.book.title,
+                      enabled: isEditing,
+                      style: bookTitleStyle,
+                      maxLines: null,
+                      minLines: 1,
+                      decoration: const InputDecoration(
+                          border: InputBorder.none, isCollapsed: true),
+                      onChanged: (value) => value.replaceAll('\n', ' '),
+                    ),
+                    const SizedBox(height: 5),
+                    TextFormField(
+                      initialValue: widget.book.author,
+                      enabled: isEditing,
+                      style: bookAuthorStyle,
+                      maxLength: null,
+                      minLines: 1,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        isCollapsed: true,
+                      ),
+                      onChanged: (value) {
+                        widget.book.author = value;
+                      },
+                    )
+                  ],
                 ),
               ),
             )

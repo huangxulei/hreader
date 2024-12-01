@@ -20,6 +20,11 @@ Future<void> importBook(File file, WidgetRef ref) async {
   ref.read(bookListProvider.notifier).refresh();
 }
 
+void updateBookRating(Book book, double rating) {
+  book.rating = rating;
+  updateBook(book);
+}
+
 Future<void> getBookMetadata(
   File file, {
   Book? book,
