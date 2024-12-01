@@ -34,6 +34,12 @@ Future<List<Book>> selectBooks() async {
   });
 }
 
+Future<void> delBook(Book book) async {
+  final db = await DBHelper().database;
+  HLog.info('dao: delete book: ${book.toMap()}');
+  await db.delete('tb_books', where: 'id = ?', whereArgs: [book.id]);
+}
+
 Future<void> updateBook(Book book) async {
   book.updateTime = DateTime.now();
   final db = await DBHelper().database;

@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hreader/dao/book.dart';
 import 'package:hreader/model/book.dart';
 import 'package:hreader/page/book_detail.dart';
+import 'package:hreader/providers/book_list.dart';
 import 'package:hreader/widgets/bookshelf/book_cover.dart';
 import 'package:hreader/widgets/delete_confirm.dart';
 import 'package:hreader/widgets/icon_and_text.dart';
@@ -13,6 +17,26 @@ class BookBottomSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    Future<void> handleDelete(BuildContext context) async {
+      Navigator.pop(context);
+      // await updateBook(Book(
+      //     id: book.id,
+      //     title: book.title,
+      //     coverPath: book.coverPath,
+      //     filePath: book.filePath,
+      //     lastReadPosition: book.lastReadPosition,
+      //     readingPercentage: book.readingPercentage,
+      //     author: book.author,
+      //     isDeleted: true,
+      //     rating: book.rating,
+      //     createTime: book.createTime,
+      //     updateTime: DateTime.now()));
+      await delBook(book);
+      ref.read(bookListProvider.notifier).refresh();
+      File(book.fileFullPath).delete();
+      File(book.coverFullPath).delete();
+    }
+
     void handleDetail(BuildContext context) {
       Navigator.pop(context);
       Navigator.push(
@@ -25,7 +49,7 @@ class BookBottomSheet extends ConsumerWidget {
 
     return Container(
       padding: const EdgeInsets.all(20),
-      height: 200,
+      height: 100,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -47,17 +71,19 @@ class BookBottomSheet extends ConsumerWidget {
             },
           ),
           DeleteConfirm(
-            delete: () {},
+            delete: () {
+              handleDelete(context);
+            },
             deleteIcon: iconAndText(
               icon: const Icon(EvaIcons.trash),
-              text: "common_delete",
+              text: "删除",
             ),
             confirmIcon: iconAndText(
               icon: const Icon(
                 EvaIcons.checkmark_circle_2,
                 color: Colors.red,
               ),
-              text: "common_confirm",
+              text: "确认",
             ),
           )
         ],
