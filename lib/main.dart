@@ -68,7 +68,9 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
             locale: prefsNotifier.locale,
             title: 'Hxl',
             themeMode: prefsNotifier.themeMode,
-            home: const BookshelfPage(),
+            home: const Scaffold(
+              body: BookshelfPage(),
+            ),
           );
         }));
   }

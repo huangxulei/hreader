@@ -7,10 +7,25 @@ part 'book_list.g.dart';
 @riverpod
 class BookList extends _$BookList {
   @override
-  Future<List<Book>> build() async {
+  Future<List<List<Book>>> build() async {
     final books = await bookDao.selectNotDeleteBooks();
+    var groupBooks = <List<Book>>[];
+    for (var book in books) {
+      if (book.groupId == 0) {
+        groupBooks.add([book]);
+      } else {
+        var existingGroup = groupBooks.firstWhere(
+            (group) => group.first.groupId == book.groupId,
+            orElse: () => []);
+        if (existingGroup.isEmpty) {
+          groupBooks.add([book]);
+        } else {
+          existingGroup.add(book);
+        }
+      }
+    }
 
-    return books;
+    return groupBooks;
   }
 
   Future<void> refresh() async {
@@ -18,8 +33,8 @@ class BookList extends _$BookList {
     state = AsyncData(await build());
   }
 
-  void moveBook(Book data) {
-    updateBook(data);
+  void moveBook(Book data, int groupId) {
+    updateBook(data.copyWith(groupId: groupId));
     refresh();
   }
 

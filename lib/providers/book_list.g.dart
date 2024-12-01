@@ -6,12 +6,12 @@ part of 'book_list.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$bookListHash() => r'9916973b0294b56c7a74c529906ce3f34cee8d32';
+String _$bookListHash() => r'3c74bb8b6e7f1f358893ed21be56a836a7a8ee07';
 
 /// See also [BookList].
 @ProviderFor(BookList)
 final bookListProvider =
-    AutoDisposeAsyncNotifierProvider<BookList, List<Book>>.internal(
+    AutoDisposeAsyncNotifierProvider<BookList, List<List<Book>>>.internal(
   BookList.new,
   name: r'bookListProvider',
   debugGetCreateSourceHash:
@@ -20,6 +20,6 @@ final bookListProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$BookList = AutoDisposeAsyncNotifier<List<Book>>;
+typedef _$BookList = AutoDisposeAsyncNotifier<List<List<Book>>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
